@@ -3,6 +3,7 @@
 #include <random>
 #include <ctime>
 #include <vector>
+#include <fstream>
 int randNum(int min, int max){
     double frac = 1.0 / (double(RAND_MAX) + 1.0);
     return int(rand() * frac * (max - min + 1) + min);
@@ -10,7 +11,7 @@ int randNum(int min, int max){
 class Home{
     std::string nameTenant;
 public:
-    Home(std::string name = "null"): nameTenant(name)
+    Home(std::string name = "none"): nameTenant(name)
     {
     }
     std::string getName(){
@@ -64,15 +65,18 @@ public:
         assert(numberHome >= 0 && numberHome <= counterHome);
         return arPtrHome[numberHome];
     }
+    int getCountAverBranch(){
+        return countAverBranch;
+    }
     AverBranch* getPtrAverBranch(int numberAverBranch){
-        assert(numberAverBranch >= 0 && numberAverBranch >= countAverBranch);
+        assert(numberAverBranch >= 0 && numberAverBranch <= countAverBranch);
         return arPtrAverBranch[numberAverBranch];
     }
 };
 
 class Wood{
     int countBranch = 0;
-    int numBB;
+    //int numBB;
     BigBranch** arrBB = nullptr;
 public:
     Wood(int inNumBB = randNum(3, 5)): countBranch(inNumBB)
@@ -89,18 +93,50 @@ public:
         assert(numberBigBranch >= 0 && numberBigBranch <= countBranch);
         return arrBB[numberBigBranch];
     }
-    void setNameHome(){
+    void setNameHomeBB(std::ifstream& fileName){
         std::string name;
+        //open file with names
+        std::cout << "Enter name homes on big branch\n";
+        //list big branch
         for (int i = 0; i < countBranch; i++){
             int countHome = arrBB[i]->getCounterHome();
+            std::cout << "Big branch " << i+1 << std::endl;
             BigBranch* ptrBigBranch = arrBB[i];
+            //list home on a branch
             for (int h = 0; h < countHome; h++){
-                Home* ptrHome = ptrBigBranch->getPtrHome(h);
+                Home* ptrBBHome = ptrBigBranch->getPtrHome(h);
                 std::cout << "Enter name home :";
-                std::cin >> name;
-                ptrHome->setName(name);
+                //std::cin >> name;
+                if (!fileName.eof()) {
+                    fileName >> name;
+                }else if (fileName.eof()){
+                    name = "none";
+                }
+                std::cout << name << std::endl;
+                ptrBBHome->setName(name);
+            }
+            //list aver branch
+            int countAverBranch = arrBB[i]->getCountAverBranch();
+            std::cout << "Enter aver branch\n";
+            for (int a = 0; a < countAverBranch; a++){
+                AverBranch* ptrAB = arrBB[i]->getPtrAverBranch(a);
+                int countABHome = ptrAB->getCountHome();
+                std::cout << "Aver branch " << a+1 << std::endl;
+                for (int h = 0; h < countABHome; h++){
+                    Home* ptrABHome = ptrAB->getPtrHome(h);
+                    std::cout << "Enter name home :";
+                    //std::cin >> name;
+                    if (!fileName.eof()) {
+                        fileName >> name;
+                    }else if (fileName.eof()){
+                        name = "none";
+                    }
+                    std::cout << name << std::endl;
+                    ptrABHome->setName(name);
+                }
             }
         }
+
     }
 };
 
@@ -125,8 +161,11 @@ int main() {
     randNum(3,5);
     Forest forest = Forest();
     std::string nameTenant;
+    std::ifstream fileName("name");
     for (int i = 0; i < 5; i++){
-        forest.getPtrWood(i)->setNameHome();
+        std::cout << "Wood " << i+1 << ":\n";
+        forest.getPtrWood(i)->setNameHomeBB(fileName);
     }
+    fileName.close();
     return 0;
 }
