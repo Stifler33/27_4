@@ -36,7 +36,7 @@ public:
         return countHome;
     }
     Home* getPtrHome(int numberHome){
-        assert(numberHome >= 0 && numberHome <= countHome);
+        assert(numberHome >= 0 && numberHome < countHome);
         return arPtrHome[numberHome];
     }
 };
@@ -62,14 +62,14 @@ public:
         return counterHome;
     }
     Home* getPtrHome(int numberHome){
-        assert(numberHome >= 0 && numberHome <= counterHome);
+        assert(numberHome >= 0 && numberHome < counterHome);
         return arPtrHome[numberHome];
     }
     int getCountAverBranch(){
         return countAverBranch;
     }
     AverBranch* getPtrAverBranch(int numberAverBranch){
-        assert(numberAverBranch >= 0 && numberAverBranch <= countAverBranch);
+        assert(numberAverBranch >= 0 && numberAverBranch < countAverBranch);
         return arPtrAverBranch[numberAverBranch];
     }
 };
@@ -90,7 +90,7 @@ public:
         return countBranch;
     }
     BigBranch* getPtrBigBranch(int numberBigBranch){
-        assert(numberBigBranch >= 0 && numberBigBranch <= countBranch);
+        assert(numberBigBranch >= 0 && numberBigBranch < countBranch);
         return arrBB[numberBigBranch];
     }
     void setNameHomeBB(std::ifstream& fileName){
@@ -152,7 +152,7 @@ public:
         }
     }
     Wood* getPtrWood(int numberWood){
-        assert (numberWood >= 0 && numberWood <= countWood);
+        assert (numberWood >= 0 && numberWood < countWood);
         return arrPtrWood[numberWood];
     }
 };
@@ -165,6 +165,39 @@ int main() {
     for (int i = 0; i < 5; i++){
         std::cout << "Wood " << i+1 << ":\n";
         forest.getPtrWood(i)->setNameHomeBB(fileName);
+    }
+    std::string searchName;
+    std::cout << "Enter search name\n";
+    std::cin >> searchName;
+    for (int w = 0; w < 5; w++){
+        int counterBB = forest.getPtrWood(w)->getNumArrBB();
+        for (int b = 0; b < counterBB; b++){
+            BigBranch* currentPtrBB = forest.getPtrWood(w)->getPtrBigBranch(b);
+            int counterHomeBB = currentPtrBB->getCounterHome();
+            for (int hB = 0; hB < counterHomeBB; hB++){
+                Home* currentPtrHomeBB = forest.getPtrWood(w)->getPtrBigBranch(b)->getPtrHome(hB);
+                if (searchName == currentPtrHomeBB->getName()){
+                    std::cout << "Wood " << w+1 << ", BigBranch " << b+1 << ", Home " << hB+1 << std::endl;
+                    std::cout << "number of neighbors " << counterHomeBB;
+                    fileName.close();
+                    return 0;
+                }
+            }
+            int countAverBranch = forest.getPtrWood(w)->getPtrBigBranch(b)->getCountAverBranch();
+            for (int ab = 0; ab < countAverBranch; ab++){
+                AverBranch* currentAverBranch = forest.getPtrWood(w)->getPtrBigBranch(b)->getPtrAverBranch(ab);
+                int countHomeAB = currentAverBranch->getCountHome();
+                for (int hAB = 0; hAB < countHomeAB; hAB++){
+                    Home* ptrHomeAB = currentAverBranch->getPtrHome(hAB);
+                    if (searchName == ptrHomeAB->getName()){
+                        std::cout << "Wood " << w+1 << ", BigBranch " << b+1 << ", Aver Branch " << ab+1 << ", Home " << hAB+1 << std::endl;
+                        std::cout << "number of neighbors " << counterHomeBB << std::endl;
+                        fileName.close();
+                        return 0;
+                    }
+                }
+            }
+        }
     }
     fileName.close();
     return 0;
