@@ -1,13 +1,8 @@
 #include <iostream>
 #include <cassert>
-#include <random>
-#include <ctime>
+#include "mainRandFunction.h"
 #include <vector>
 #include <fstream>
-int randNum(int min, int max){
-    double frac = 1.0 / (double(RAND_MAX) + 1.0);
-    return int(rand() * frac * (max - min + 1) + min);
-}
 class Home{
     std::string nameTenant;
 public:
@@ -157,7 +152,7 @@ public:
     }
 };
 int main() {
-    srand(std::time(nullptr));
+    timeSrand();
     randNum(3,5);
     Forest forest = Forest();
     std::string nameTenant;
