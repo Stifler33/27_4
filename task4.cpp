@@ -54,14 +54,35 @@ public:
     void list(){
         for (int i = 0; i < 5; i++){
             std::cout << "wood " << i+1 << std::endl;
-            std::cout << "name " << arrBranch[i]->getName() << std::endl;
+            std::cout << " name " << arrBranch[i]->getName() << std::endl;
             for (int b = 0; b < arrBranch[i]->averBranch.size(); b++) {
-                std::cout << " aver branch " << b+1 << std::endl;
+                std::cout << "aver branch " << b+1 << std::endl;
                 for (auto ab : arrBranch[i]->averBranch){
                     std::cout << " name " << ab->getName() << std::endl;
                 }
             }
         }
+    }
+    void searchElf(){
+
+        std::cout << "enter name\n";
+        std::string name;
+        std::cin >> name;
+        for (int B = 0; B < 5; B++){
+            if (arrBranch[B]->getName() == name){
+                std::cout << "there is such\n";
+                return;
+            }
+            for (int b = 0; b < arrBranch[B]->averBranch.size(); b++){
+                Branch* ptrAverBranch = arrBranch[B]->averBranch[b];
+                if (name == ptrAverBranch->getName()){
+                    std::cout << "there is such\n";
+                    std::cout << "neighbor " << arrBranch[B]->getName() << std::endl;
+                    return;
+                }
+            }
+        }
+        std::cout << "found nobody\n";
     }
 };
 int main(){
@@ -70,6 +91,6 @@ int main(){
     wood.setNameBranch(fileName);
     wood.setNameAverBranch(fileName);
     wood.list();
-
+    wood.searchElf();
     return 0;
 }
